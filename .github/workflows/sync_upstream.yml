@@ -32,5 +32,5 @@ jobs:
       run: |
         git remote add upstream https://x-access-token:${{ env.UPSTREAM_TOKEN }}@github.com/${{ env.UPSTREAM_OWNER}}/${{ env.UPSTREAM_REPO }}.git
         git fetch upstream
-        git merge upstream/main --allow-unrelated-histories # To deal with divergent histories
-        git push origin main
+        git merge upstream/master --allow-unrelated-histories # To deal with divergent histories
+        git push origin master
