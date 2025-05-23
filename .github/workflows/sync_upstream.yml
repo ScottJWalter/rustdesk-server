@@ -1,0 +1,36 @@
+name: Sync Fork
+
+env:
+  REPO_TOKEN: ${{ secrets.REPOSITORY_TOKEN }}
+  REPO_OWNER: "ScottJWalter"
+  REPO_EMAIL: "sjwalter@gmail.com"
+  UPSTREAM_TOKEN: ${{ secrets.REPOSITORY_TOKEN }}
+  UPSTREAM_OWNER: "rustdesk"
+  UPSTREAM_REPO: "rustdesk-server"
+
+on:
+  schedule:
+    - cron: '0 05 * * *' # This will run the action daily at midnight
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v3
+      with:
+        token: ${{ env.REPO_TOKEN }}
+
+    - name: Configure Git
+      run: |
+        git config user.name ${{ env.REPO_OWNER }}
+        git config user.email ${{ env.REPO_EMAIL }}
+
+    - name: Sync with Upstream
+      run: |
+        git remote add upstream https://x-access-token:${{ env.UPSTREAM_TOKEN }}@github.com/${{ env.UPSTREAM_OWNER}}/${{ env.UPSTREAM_REPO }}.git
+        git fetch upstream
+        git merge upstream/main --allow-unrelated-histories # To deal with divergent histories
+        git push origin main
